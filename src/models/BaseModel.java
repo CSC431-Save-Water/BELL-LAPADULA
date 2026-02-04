@@ -73,6 +73,14 @@ public abstract class BaseModel {
         return this.lastModifedAt;
     }
 
+    public String getObjectApiName() {
+        return this.objectApiName;
+    }
+
+    public SecurityLevel getObjectSecurityLevel() {
+        return this.securityLevel;
+    }
+
     protected void touch() {
         this.lastModifedAt = Instant.now();
     }
