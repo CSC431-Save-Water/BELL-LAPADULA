@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 public abstract class BaseModel {
@@ -11,7 +12,7 @@ public abstract class BaseModel {
     // Field is a static sub-class for the Base Model class which provides Class Level Field Declarations
     // These field objects are then placed in the fields map.
     // The primary idea here is to create a dynamic map, that can safely cast back into it's proper type.
-    static final class Field<T> {
+    public static final class Field<T> {
         private final String name;
         private final Class<T> type;
 
@@ -43,6 +44,11 @@ public abstract class BaseModel {
         @Override
         public int hashCode() {
             return Objects.hash(name, type);
+        }
+
+        @Override
+        public String toString() {
+            return this.name + "(" + this.type + ")";
         }
     }
 
@@ -81,11 +87,15 @@ public abstract class BaseModel {
         return this.securityLevel;
     }
 
+    public Set<Field<?>> getAvalibleFields() {
+        return fields.keySet();
+    }
+
     protected void touch() {
         this.lastModifedAt = Instant.now();
     }
 
-    protected <T> void set(Field<T> field, T value, User currentUser) throws Exception {
+    public <T> void set(Field<T> field, T value, User currentUser) throws Exception {
         if (hasWriteAcess(currentUser)) {
             fields.put(field, value);
         } else {
@@ -93,7 +103,7 @@ public abstract class BaseModel {
         }
     }
 
-    protected <T> T get(Field<T> field, User currentUser) throws Exception {
+    public <T> T get(Field<T> field, User currentUser) throws Exception {
         // Since the Map stores all values as objects, they must be
         // casted before returning the value.
         if (hasReadAcess(currentUser)) {

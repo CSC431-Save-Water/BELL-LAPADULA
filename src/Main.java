@@ -17,6 +17,8 @@ public class Main {
     // This map contains all users linked with their UUIDS
     public static Map<UUID, User> userMap = new HashMap<>();
 
+    // The following get___FromString functions are defined in Main due to a dependency on
+    // userMap && objectMap
     private static User getUserFromString(String userId) {
         try {
             UUID id = UUID.fromString(userId);
@@ -62,6 +64,7 @@ public class Main {
         objectMap.put(miracle.getId(), miracle);
         objectMap.put(bombastic.getId(), bombastic);
         
+        // List out all current user/objects
         System.out.println("Users: ");
         for (User u : userMap.values()) {
             System.out.println(u.getFullName() + "\t" + u.getUserUUID() + "\t" + u.getUserSecurityLevel().getLevelName());
@@ -72,8 +75,10 @@ public class Main {
             System.out.println(obj.getObjectApiName() + "\t" + obj.getId() + "\t" + obj.getObjectSecurityLevel().getLevelName());
         }
 
-        Scanner userInput = new Scanner(System.in);
         while(true) {
+            Scanner userInput = new Scanner(System.in);
+
+            // Gather simulated User
             System.out.print("\nEnter the User Id you wish to simulate as: ");
             String enteredUserId = userInput.nextLine().strip();
 
@@ -85,6 +90,7 @@ public class Main {
                 user = getUserFromString(enteredUserId);
             }
 
+            // Gather simulated object
             System.out.print("\nEnter the Object Id you wish to touch: ");
             String enteredObjectId = userInput.nextLine();
 
@@ -96,9 +102,30 @@ public class Main {
                 model = getBaseModelFromString(enteredObjectId);
             }
 
+            // Fetch and display valid fields for object
+            if (model instanceof MissionSpecModel missionSpecModel) {
+                for (BaseModel.Field<?> f : missionSpecModel.getAvalibleFields()) {
+                    System.out.println(f);
+                }
+            }
 
-            System.out.print("\nEnter the operation you wish to preform: ");
-            String readOrWrite = userInput.nextLine();
-        }
+            System.out.print("\nEnter the operation you wish to preform (READ, WRITE): ");
+            String readOrWrite = userInput.nextLine().toUpperCase();
+
+            while(!(readOrWrite.equals("READ") || readOrWrite.equals("WRITE"))) {
+                System.out.print("Invalid operation (" + readOrWrite +") please try again: ");
+                readOrWrite = userInput.nextLine().toUpperCase();
+            }
+
+            if (readOrWrite.equals("READ")) {
+                // READ operation
+
+
+            } else {    
+                // WRITE operation
+            }
+
+            userInput.close();
+        } 
     }
 }
