@@ -2,6 +2,7 @@
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.UUID;
 import models.BaseModel;
 import models.MissionSpecModel;
@@ -102,11 +103,12 @@ public class Main {
                 model = getBaseModelFromString(enteredObjectId);
             }
 
-            // Fetch and display valid fields for object
-            if (model instanceof MissionSpecModel missionSpecModel) {
-                for (BaseModel.Field<?> f : missionSpecModel.getAvalibleFields()) {
-                    System.out.println(f);
-                }
+            Set<BaseModel.Field<?>> avalibleFields = model.getAvalibleFields();
+            
+            System.out.println("\n" + model.getObjectApiName() + ": ");
+
+            for (BaseModel.Field<?> f : avalibleFields) {
+                System.out.println(f);
             }
 
             System.out.print("\nEnter the operation you wish to preform (READ, WRITE): ");
@@ -117,10 +119,11 @@ public class Main {
                 readOrWrite = userInput.nextLine().toUpperCase();
             }
 
+            // Get field for operation
+
+
             if (readOrWrite.equals("READ")) {
                 // READ operation
-
-
             } else {    
                 // WRITE operation
             }
