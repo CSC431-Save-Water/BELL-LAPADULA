@@ -1,6 +1,7 @@
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.UUID;
 import models.BaseModel;
 import models.MissionSpecModel;
@@ -15,7 +16,25 @@ public class Main {
 
     // This map contains all users linked with their UUIDS
     public static Map<UUID, User> userMap = new HashMap<>();
-    
+
+    private static User getUserFromString(String userId) {
+        try {
+            UUID id = UUID.fromString(userId);
+            return userMap.get(id);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    private static BaseModel getBaseModelFromString(String baseModelId) {
+        try {
+            UUID id = UUID.fromString(baseModelId);
+            return objectMap.get(id);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
     public static void main(String[] args) {
 
         // Initialize Users for Simulation
@@ -51,6 +70,35 @@ public class Main {
         System.out.println("\n\nObjects: ");
         for (BaseModel obj : objectMap.values()) {
             System.out.println(obj.getObjectApiName() + "\t" + obj.getId() + "\t" + obj.getObjectSecurityLevel().getLevelName());
+        }
+
+        Scanner userInput = new Scanner(System.in);
+        while(true) {
+            System.out.print("\nEnter the User Id you wish to simulate as: ");
+            String enteredUserId = userInput.nextLine().strip();
+
+            User user = getUserFromString(enteredUserId);
+
+            while(user == null) {
+                System.out.print("User does not exists (" + enteredUserId + ") please try again: ");
+                enteredUserId = userInput.nextLine().strip();
+                user = getUserFromString(enteredUserId);
+            }
+
+            System.out.print("\nEnter the Object Id you wish to touch: ");
+            String enteredObjectId = userInput.nextLine();
+
+            BaseModel model = getBaseModelFromString(enteredObjectId);
+
+            while(model == null) {
+                System.out.print("Model does not exists (" + enteredObjectId + ") please try again: ");
+                enteredObjectId = userInput.nextLine().strip();
+                model = getBaseModelFromString(enteredObjectId);
+            }
+
+
+            System.out.print("\nEnter the operation you wish to preform: ");
+            String readOrWrite = userInput.nextLine();
         }
     }
 }
