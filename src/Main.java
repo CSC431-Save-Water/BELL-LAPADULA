@@ -13,10 +13,13 @@ import models.WeaponsSpecModel;
 public class Main {
 
     // This map contains all objects linked with their UUIDs
-    public static Map<UUID, BaseModel> objectMap = new HashMap<>();
+    private static Map<UUID, BaseModel> objectMap = new HashMap<>();
 
     // This map contains all users linked with their UUIDS
-    public static Map<UUID, User> userMap = new HashMap<>();
+    private static Map<UUID, User> userMap = new HashMap<>();
+
+    // This set contains the current avalible fields for operations
+    private static Set<BaseModel.Field<?>> avalibleFields;
 
     // The following get___FromString functions are defined in Main due to a dependency on
     // userMap && objectMap
@@ -36,6 +39,14 @@ public class Main {
         } catch (IllegalArgumentException e) {
             return null;
         }
+    }
+
+    private static BaseModel.Field<?> getFieldFromString(String targetField) {
+        for (BaseModel.Field<?> f : avalibleFields) {
+            if (f.name().equals(targetField)) return f;
+        }
+
+        return null;
     }
 
     public static void main(String[] args) {
@@ -103,14 +114,7 @@ public class Main {
                 model = getBaseModelFromString(enteredObjectId);
             }
 
-            Set<BaseModel.Field<?>> avalibleFields = model.getAvalibleFields();
-            
-            System.out.println("\n" + model.getObjectApiName() + ": ");
-
-            for (BaseModel.Field<?> f : avalibleFields) {
-                System.out.println(f);
-            }
-
+            // Gather simulated action
             System.out.print("\nEnter the operation you wish to preform (READ, WRITE): ");
             String readOrWrite = userInput.nextLine().toUpperCase();
 
@@ -119,8 +123,26 @@ public class Main {
                 readOrWrite = userInput.nextLine().toUpperCase();
             }
 
-            // Get field for operation
+            // Sets the global avalible fields set (DO NOT REMOVE)
+            avalibleFields = model.getAvalibleFields();
+            
+            System.out.println("\n" + model.getObjectApiName() + ": ");
 
+            for (BaseModel.Field<?> f : avalibleFields) {
+                System.out.println(f);
+            }
+
+            // Gather simulated field
+            System.out.print("\nEnter the field you wish to preform the operation on (case-sensitive): ");
+            String enteredTargetField = userInput.nextLine().strip();
+
+            BaseModel.Field<?> targetField = getFieldFromString(enteredTargetField);
+
+            while(targetField == null) {
+                System.out.print("Invalid field (" + enteredTargetField + ") please try again: ");
+                enteredTargetField = userInput.nextLine().strip();
+                targetField = getFieldFromString(enteredTargetField);
+            }
 
             if (readOrWrite.equals("READ")) {
                 // READ operation
